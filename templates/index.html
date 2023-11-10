@@ -1,0 +1,80 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Attendance Tracker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px;
+            padding: 8px;
+        }
+        th {
+            background-color: #f6baeb;
+            color: white;
+        }
+        .center {
+            width: 50%;
+            margin: auto;
+            border-color: antiquewhite;
+            border: 5px;
+            padding: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class = "center"> 
+        <h1>Attendance Tracker</h1>
+        <p>Click on the start facial recognition button to submit your attendance.</p>
+        <p>Wait for the camera to open, it may take a few minutes.</p>
+        <p>Automatic Attendance is a web-based solution that uses facial recognition technology to streamline the process of tracking student attendance. With our Python-based facial recognition system and user-friendly interface, schools and institutions can easily monitor and display attendance data in real-time.</p>
+    </div>
+    <div class = "center">
+        <button id="startRecognition">Start Facial Recognition</button>
+    </div>
+    <div class = "center">
+        <table id="attendanceTable">
+            <tr>
+                <th>Name</th>
+                <th>Time</th>
+                <th>Date</th>
+            </tr>
+        </table> 
+    </div> 
+
+    <script>
+        document.getElementById('startRecognition').addEventListener('click', function() {
+            fetch('/start_recognition', { method: 'POST' } );
+        });
+
+        function updateAttendanceTable() {
+            fetch('/get_attendance')
+                .then(response => response.json())
+                .then(data => {
+                    var table = document.getElementById('attendanceTable');
+                    // Clear the table
+                    table.innerHTML = '<tr><th>Name</th><th>Time</th><th>Date</th></tr>';
+                    // Add the new data
+                    data.forEach(item => {
+                        var row = table.insertRow(-1);
+                        var cell1 = row.insertCell(0);
+                        var cell2 = row.insertCell(1);
+                        var cell3 = row.insertCell(2);
+                        cell1.innerHTML = item.name;
+                        cell2.innerHTML = item.time;
+                        cell3.innerHTML = item.date;
+                    });
+                });
+        }
+
+        // Update the attendance table every 5 seconds
+        setInterval(updateAttendanceTable, 5000);
+    </script>
+</body>
+</html>
